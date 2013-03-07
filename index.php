@@ -47,9 +47,9 @@ include_once 'lib/oolog.class.php';
 
 # Configuration de base
 $config = array(
-    'url_blog'            => 'http://localhost/pluxml', // URL de votre site, sans le slash final
+    'url_blog'            => '', // URL de votre site, sans le slash final
     'racine'              => plxUtils::getRacine(),
-    'author'              => 'admin',
+    'author'              => '',
     'documents'           => PLX_ROOT.'data/documents/',
     'racine_articles'     => PLX_ROOT.'data/articles/',
     'racine_commentaires' => PLX_ROOT.'data/commentaires/',
