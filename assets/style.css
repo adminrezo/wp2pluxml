@@ -1,0 +1,17 @@
+.actif {
+    background: transparent url("tick.png") no-repeat top right;
+    color: green;
+}
+
+.inactif {
+    background: transparent url("cross.png") no-repeat top right;
+    color: red;
+}
+
+.erreur {
+    color: red;
+}
+
+footer {
+    font-style: italic;
+}
