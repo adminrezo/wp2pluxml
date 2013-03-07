@@ -189,7 +189,7 @@ class Wordpress
      * @param string $content
      */
     public function setContent($content)
-    {        
+    {
         $this->content = nl2br($content);
     }
 
@@ -345,7 +345,7 @@ class Wordpress
     {
         return $this->rubrique_id;
     }
-	
+
     /**
      * Setter des commentaires
      *
@@ -403,7 +403,7 @@ class Wordpress
      */
     public function getFilename()
     {
-        return $this->id . '.' . $this->getRubriqueId() . '.' .
+        return $this->id . '.' . $this->getRubriqueId() . '.001.' .
             $this->getDateForFilename() . '.' . $this->url_file . '.xml';
     }
 }

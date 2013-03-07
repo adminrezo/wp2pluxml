@@ -6,7 +6,7 @@
  * intégrés à PluXml
  *
  * @todo pour les méthodes removeNamespaceFromXML(),convertPathMedias(),
- * convertSHPTagToHTML(), getXmlWordpressFiles() et displayListXmlWordpressFiles(),
+ * getXmlWordpressFiles() et displayListXmlWordpressFiles(),
  * voir pour les déplacer dans Wordpress.class.php
  * @todo optimiser le script quand on appelle getRubriqueIdByUrl() : ne plus
  * parser le fichier complet mais parcourir un tableau qui doit être + rapide
@@ -21,24 +21,6 @@ error_reporting(0);
 
 class Tools
 {
-    /**
-     * Nettoie une chaine de caractères en remplaçant les balises
-     * [sourcecode language='...']...[/sourcecode] créées par le plugin
-     * Wordpress SyntaxHighlighterPlus
-     *
-     * @access public
-     * @param string $content chaine à nettoyer
-     * @return string chaine nettoyée
-     */
-    private function convertSHPTagToHTML($content)
-    {
-        $regex       = "#\[sourcecode language=(.+?)\](.+?)\[\/sourcecode\]#s";
-        $replacement = "<code class=$1>$2</code>";
-        $content     = preg_replace($regex, $replacement, $content);
-
-        return $content;
-    }
-
     /**
      * Nettoie le XML généré par le plugin d'export de Wordpress
      *
@@ -74,9 +56,8 @@ class Tools
                     "</" . $replace . ">", $source);
         }
 
-        $source = self::convertSHPTagToHTML($source);
         $source = self::convertPathMedias($source);
-        
+
         return $source;
     }
 
@@ -110,13 +91,14 @@ class Tools
 
         $xml = new SimpleXMLExtend($output);
 
-        $infopost = $xml->addChild("infopost");
-        $infopost->addCData("title", $billet->getTitle());
-        $infopost->addCData("author", $billet->getAuthor());
-        $infopost->addChild("allow_com", $billet->getAllowCom());
-
+        $xml->addCData("title", $billet->getTitle());
+        $xml->addChild("allow_com", $billet->getAllowCom());
+        $xml->addCData("template", 'article.php');
         $xml->addCData("chapo", $billet->getChapo());
         $xml->addCData("content", $billet->getContent());
+        $xml->addCData("tags", '');
+        $xml->addCData("meta_description", '');
+        $xml->addCData("meta_keywords", '');
 
         return $xml->asXML();
     }
@@ -228,7 +210,7 @@ class Tools
                 substr($comment['comment_date'], 8, 2),
                 substr($comment['comment_date'], 0, 4)
                 );
-        
+
         return $timestamp;
     }
 
@@ -242,7 +224,7 @@ class Tools
     private function isAvailableExtension($file)
     {
         $available_extensions = array('xml');
-        
+
         return (in_array(substr(strrchr($file,'.'), 1), $available_extensions) ? TRUE : FALSE);
     }
 
@@ -256,7 +238,7 @@ class Tools
     private function getXmlWordpressFiles()
     {
         $files = array();
-        
+
         if (!$handle = opendir(".")) {
             Tools::log('Erreur lors du parcours du répertoire principal.', __LINE__);
             return FALSE;
@@ -338,15 +320,22 @@ class Tools
         $count = 1;
         foreach ($items as $item) {
             $number = sprintf("%03s", $count);
-            $attr   = array(
-                'number' => $number,
-                'tri'    => $config['tri'],
-                'bypage' => $config['bypage'],
-                'menu'   => $config['menu'],
-                'url'    => $item->category_nicename,
 
-            );
-            $node = $xml->addCData('categorie', $item->cat_name, $attr);
+            $categorie = $xml->addChild('categorie');
+            $categorie->addAttribute('number', $number);
+            $categorie->addAttribute('active', '1');
+            $categorie->addAttribute('homepage', '1');
+            $categorie->addAttribute('tri', 'desc');
+            $categorie->addAttribute('bypage', '5');
+            $categorie->addAttribute('menu', 'oui');
+            $categorie->addAttribute('url', $item->category_nicename);
+            $categorie->addAttribute('template', 'categorie.php');
+
+            $categorie->addCData("name", $item->cat_name);
+            $categorie->addCData("description", '');
+            $categorie->addCData("meta_description", '');
+            $categorie->addCData("meta_keywords", '');
+            $categorie->addCData("title_htmltag", '');
 
             if (!Tools::addCategorieToHtaccess($item, $number, $config)) {
                 return FALSE;
