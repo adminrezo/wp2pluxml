@@ -3,8 +3,8 @@
  * Configuration de wp2pluxml
  *
  * @category   wp2pluxml
- * @author     Nicolas Loeuillet <nicolas.loeuillet@gmail.com>
- * @copyright  2010
+ * @author     Nicolas Lœuillet <nicolas.loeuillet@gmail.com>
+ * @copyright  2010-2013
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  */
 
@@ -47,42 +47,15 @@ include_once 'lib/oolog.class.php';
 
 # Configuration de base
 $config = array(
-    'url_blog'            => '', // URL de votre site, sans le slash final
     'racine'              => plxUtils::getRacine(),
-    'author'              => '',
     'documents'           => PLX_ROOT.'data/documents/',
     'racine_articles'     => PLX_ROOT.'data/articles/',
     'racine_commentaires' => PLX_ROOT.'data/commentaires/',
     'categories'          => PLX_ROOT.'data/configuration/categories.xml',
 );
 
-# On vérifie que SimpleXML est installée
-$simplexml_actif = TRUE;
-if (!extension_loaded('simplexml')) {
-    $simplexml_actif = FALSE;
-    $demarrer_installation = FALSE;
-}
-
-# On vérifie qu'il y a bien un ou plusieurs fichiers d'export dans le répertoire de wp2pluxml
-$xml_presents = TRUE;
-if (($liste_fichiers = Tools::displayListXmlWordpressFiles()) == array()) {
-    $xml_presents = FALSE;
-    $demarrer_installation = FALSE;
-}
-
-# On vérifie que l'URL du blog est bien définie
-$url_definie = TRUE;
-if (!$config['url_blog']) {
-    $url_definie = FALSE;
-    $demarrer_installation = FALSE;
-}
-
-# On vérifie que le nom de l'auteur est bien défini
-$auteur_defini = TRUE;
-if (!$config['author']) {
-    $auteur_defini = FALSE;
-    $demarrer_installation = FALSE;
-}
+# Vérifications à effectuer avant toute conversion
+$verifications = Tools::verificationInstallation($demarrer_installation, $config);
 
 # Echappement des caractères
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -92,7 +65,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 if(!empty($_POST['file'])) {
     # Conversion !
     if (!Tools::convert2pluxml($_POST, $config)) {
-        die('Une erreur a été rencontrée durant la conversion. Consultez les logs.');
+        die('Une erreur a &eacute;t&eacute; rencontr&eacute;e durant la conversion. Consultez le fichier wp2pluxml.log pour en savoir plus.');
     }
     header('Location: '.PLX_ROOT.'index.php');
     exit;
@@ -102,10 +75,11 @@ if(!empty($_POST['file'])) {
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>wp2pluxml - Configuration</title>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo strtolower(PLX_CHARSET) ?>" />
+<title>wp2pluxml - quittez WordPress pour PluXml</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="assets/knacss.css" media="all">
 <link rel="stylesheet" href="assets/style.css" media="all">
+<link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
 </head>
 <body class="w960p mtl ml3">
 
@@ -124,18 +98,16 @@ if(!empty($_POST['file'])) {
 
         <div>
             <ul id="prerequis" class="w400p">
-                <li class="<?php echo ($url_definie ? 'actif' : 'inactif'); ?>">Modifier $config['url_blog'] (ligne 50 de ce fichier)</li>
-                <li class="<?php echo ($auteur_defini ? 'actif' : 'inactif'); ?>">Modifier $config['author'] (ligne 52 de ce fichier)</li>
                 <li class="<?php echo ($pluxml_actif ? 'actif' : 'inactif'); ?>">PluXml installé dans le répertoire parent</li>
-                <li class="<?php echo ($simplexml_actif ? 'actif' : 'inactif'); ?>">Extension SimpleXML installée</li>
-                <li class="<?php echo ($xml_presents ? 'actif' : 'inactif'); ?>">Fichier(s) d'export présent(s)</li>
+                <li class="<?php echo ($verifications['simplexml_actif'] ? 'actif' : 'inactif'); ?>">Extension SimpleXML installée</li>
+                <li class="<?php echo ($verifications['xml_presents'] ? 'actif' : 'inactif'); ?>">Fichier(s) d'export présent(s)</li>
 
             </ul>
         </div>
 
         <h2>Go !</h2>
 
-        <?php if(!$demarrer_installation) : ?>
+        <?php if(!$verifications['demarrer_installation']) : ?>
         <div class="erreur">
             Toutes les conditions ne sont pas réunies pour démarrer la conversion. Merci de relire les pré-requis ci-dessus.
         </div>
@@ -146,8 +118,10 @@ if(!empty($_POST['file'])) {
         </div>
         <div>
             <form action="index.php" method="post">
-            <?php plxUtils::printSelect('file', $liste_fichiers) ?>
-                <input type="submit" value="Lancer la conversion" />
+                <ul id="liste_formulaire">
+                    <li><?php plxUtils::printSelect('file', Tools::displayListXmlWordpressFiles()) ?></li>
+                    <li><input type="submit" value="Lancer la conversion" /></li>
+                </ul>
             </form>
         </div>
 

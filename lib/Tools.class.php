@@ -5,15 +5,15 @@
  * Contient les outils nécessaires à la création des fichiers XML qui seront
  * intégrés à PluXml
  *
- * @todo pour les méthodes removeNamespaceFromXML(),convertPathMedias(),
+ * @todo pour les méthodes cleanXML(), removeNamespaceFromXML(),convertPathMedias(),
  * getXmlWordpressFiles() et displayListXmlWordpressFiles(),
  * voir pour les déplacer dans Wordpress.class.php
  * @todo optimiser le script quand on appelle getRubriqueIdByUrl() : ne plus
  * parser le fichier complet mais parcourir un tableau qui doit être + rapide
  * @todo mettre $config en globale
  * @category   wp2pluxml
- * @author     Nicolas Loeuillet <nicolas.loeuillet@gmail.com>
- * @copyright  2010
+ * @author     Nicolas Lœuillet <nicolas.loeuillet@gmail.com>
+ * @copyright  2010-2013
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  */
 
@@ -337,9 +337,9 @@ class Tools
             $categorie->addCData("meta_keywords", '');
             $categorie->addCData("title_htmltag", '');
 
-            if (!Tools::addCategorieToHtaccess($item, $number, $config)) {
-                return FALSE;
-            }
+            // if (!Tools::addCategorieToHtaccess($item, $number, $config)) {
+            //     return FALSE;
+            // }
 
             $count ++;
         }
@@ -486,7 +486,8 @@ class Tools
      */
     private function addBilletToHtaccess(Wordpress $billet, $config)
     {
-        $url_originale = str_replace($config['url_blog'], '', $billet->getUrl());
+        // $url_originale = str_replace($config['url_blog'], '', $billet->getUrl());
+        $url_originale = $billet->getUrl();
         $content       = 'RedirectPermanent '. $url_originale . ' /?article' .
             $billet->getId() . '/' . $billet->getUrlFile() . "\r\n";
 
@@ -515,7 +516,8 @@ class Tools
         foreach ($items as $item) {
             $billet = new Wordpress($item);
             $billet->setId($id);
-            $billet->setAuthor($config['author']);
+            // FIXME remplacer ici par l'identifiant de l'auteur du billet
+            // $billet->setAuthor($config['author']);
 
             $rubrique_id = self::getRubriqueIdByUrl($categories, $billet->getRubriqueUrl());
             $billet->setRubriqueId($rubrique_id);
@@ -528,9 +530,9 @@ class Tools
                 return FALSE;
             }
 
-            if (!Tools::addBilletToHtaccess($billet, $config)) {
-                return FALSE;
-            }
+            // if (!Tools::addBilletToHtaccess($billet, $config)) {
+            //     return FALSE;
+            // }
 
             $id ++;
         }
@@ -550,6 +552,29 @@ class Tools
         $log =& new oolog("wp2pluxml.log", FILE | DEBUG);
         $log->log($text, DEBUG, false, $line);
         $log->closelog();
+    }
+
+    public function verificationInstallation($demarrer_installation, $config)
+    {
+        $verifications = array(
+            'demarrer_installation' => $demarrer_installation,
+            'simplexml_actif'       => TRUE,
+            'xml_presents'       => TRUE,
+            );
+
+        # On vérifie que SimpleXML est installée
+        if (!extension_loaded('simplexml')) {
+            $verifications['simplexml_actif'] = FALSE;
+            $verifications['demarrer_installation'] = FALSE;
+        }
+
+        # On vérifie qu'il y a bien un ou plusieurs fichiers d'export dans le répertoire de wp2pluxml
+        if (self::displayListXmlWordpressFiles() == array()) {
+            $verifications['xml_presents'] = FALSE;
+            $verifications['demarrer_installation'] = FALSE;
+        }
+
+        return $verifications;
     }
 
     /**
