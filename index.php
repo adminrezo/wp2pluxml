@@ -114,7 +114,7 @@ if(!empty($_POST['file'])) {
         <?php else: ?>
 
         <div>
-            Sélectionnez votre export XML dans la liste déroulante et validez pour lancer la conversion. Allez boire un café. Revenez.
+            Sélectionnez votre export XML dans la liste déroulante et validez pour lancer la conversion. Allez boire un café. Non, je plaisante, vous n'aurez pas le temps.
         </div>
         <div>
             <form action="index.php" method="post">
