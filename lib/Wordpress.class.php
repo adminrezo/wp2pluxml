@@ -73,6 +73,12 @@ class Wordpress
      * @var array
      */
     private $comments;
+    /**
+     * Status du billet
+     * @var string
+     */
+    private $status;
+
 
     /**
      * Constructeur
@@ -91,6 +97,7 @@ class Wordpress
         $this->setDate($item->post_date);
         $this->setRubriqueUrl($item->category);
         $this->setComments($item->comment);
+        $this->setStatus($item->status);
     }
 
     /**
@@ -383,6 +390,28 @@ class Wordpress
     }
 
     /**
+     * Getter du statut
+     *
+     * @access public
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Setter du statut
+     *
+     * @access public
+     * @param string $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    /**
      * Formate la date pour être utilisée dans le nom du fichier
      *
      * @access private
@@ -403,7 +432,24 @@ class Wordpress
      */
     public function getFilename()
     {
-        return $this->id . '.' . $this->getRubriqueId() . '.001.' .
+
+        $filename = '';
+
+        # Billet en attente de validation
+        if ($this->getStatus() == 'pending') {
+            $filename .= '_';
+        }
+
+        $filename .= $this->id . '.';
+
+        # Le billet est-il un brouillon ou était-il à la corbeille ?
+        if ($this->getStatus() == 'draft' || $this->getStatus() == 'auto-draft' || $this->getStatus() == 'trash') {
+            $filename .= 'draft,';
+        }
+
+        $filename .= $this->getRubriqueId() . '.001.' .
             $this->getDateForFilename() . '.' . $this->url_file . '.xml';
+
+        return $filename;
     }
 }

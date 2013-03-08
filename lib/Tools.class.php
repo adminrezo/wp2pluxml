@@ -36,6 +36,7 @@ class Tools
             'wp:cat_name'             => 'cat_name',
             'wp:post_name'            => 'post_name',
             'wp:post_date'            => 'post_date',
+            'wp:status'               => 'status',
             'wp:comment_status'       => 'comment_status',
             'wp:comment'              => 'comment',
             'excerpt:encoded'         => 'excerpt',
