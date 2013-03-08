@@ -52,6 +52,7 @@ $config = array(
     'racine_articles'     => PLX_ROOT.'data/articles/',
     'racine_commentaires' => PLX_ROOT.'data/commentaires/',
     'categories'          => PLX_ROOT.'data/configuration/categories.xml',
+    'auteurs'             => PLX_ROOT.'data/configuration/users.xml',
 );
 
 # Vérifications à effectuer avant toute conversion

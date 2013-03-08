@@ -33,6 +33,7 @@ class Tools
         $namespaces = array (
             'wp:category'             => 'category',
             'wp:category_nicename'    => 'category_nicename',
+            'wp:category_description' => 'category_description',
             'wp:cat_name'             => 'cat_name',
             'wp:post_name'            => 'post_name',
             'wp:post_date'            => 'post_date',
@@ -333,8 +334,8 @@ class Tools
             $categorie->addAttribute('template', 'categorie.php');
 
             $categorie->addCData("name", $item->cat_name);
-            $categorie->addCData("description", '');
-            $categorie->addCData("meta_description", '');
+            $categorie->addCData("description", $item->category_description);
+            $categorie->addCData("meta_description", $item->category_description);
             $categorie->addCData("meta_keywords", '');
             $categorie->addCData("title_htmltag", '');
 

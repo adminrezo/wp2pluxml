@@ -69,6 +69,11 @@ class Wordpress
      */
     private $rubrique_id;
     /**
+     * Description de la rubrique
+     * @var string
+     */
+    private $category_description;
+    /**
      * Liste des commentaires du billet
      * @var array
      */
@@ -351,6 +356,28 @@ class Wordpress
     public function getRubriqueId()
     {
         return $this->rubrique_id;
+    }
+
+    /**
+     * Setter de la description de la rubrique
+     *
+     * @access public
+     * @param string $description
+     */
+    public function setCategoryDescription($category_description)
+    {
+        $this->date = $category_description;
+    }
+
+    /**
+     * Getter de la description de la rubrique
+     *
+     * @access public
+     * @return string
+     */
+    public function getCategoryDescription()
+    {
+        return $this->category_description;
     }
 
     /**
