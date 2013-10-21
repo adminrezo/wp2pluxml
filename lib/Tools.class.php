@@ -38,6 +38,7 @@ class Tools
             'wp:post_name'            => 'post_name',
             'wp:post_date'            => 'post_date',
             'wp:status'               => 'status',
+            'wp:post_type'            => 'post_type',
             'wp:comment_status'       => 'comment_status',
             'wp:comment'              => 'comment',
             'excerpt:encoded'         => 'excerpt',
@@ -520,6 +521,10 @@ class Tools
             $billet->setId($id);
             // FIXME remplacer ici par l'identifiant de l'auteur du billet
             // $billet->setAuthor($config['author']);
+
+            if ($billet->getType() != 'post') {
+                continue;
+            }
 
             $rubrique_id = self::getRubriqueIdByUrl($categories, $billet->getRubriqueUrl());
             $billet->setRubriqueId($rubrique_id);
