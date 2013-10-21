@@ -83,7 +83,11 @@ class Wordpress
      * @var string
      */
     private $status;
-
+    /**
+     * Type du billet
+     * @var string
+     */
+    private $type;
 
     /**
      * Constructeur
@@ -103,6 +107,7 @@ class Wordpress
         $this->setRubriqueUrl($item->category);
         $this->setComments($item->comment);
         $this->setStatus($item->status);
+        $this->setType($item->post_type);
     }
 
     /**
@@ -436,6 +441,28 @@ class Wordpress
     public function setStatus($status)
     {
         $this->status = $status;
+    }
+
+    /**
+     * Getter du type
+     *
+     * @access public
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Setter du type
+     *
+     * @access public
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
     }
 
     /**
