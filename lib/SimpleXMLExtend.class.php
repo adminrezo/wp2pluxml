@@ -8,7 +8,7 @@
  * @category   wp2pluxml
  * @author     Nicolas Lœuillet <nicolas.loeuillet@gmail.com>
  * @copyright  2010-2013
- * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @license    http://www.wtfpl.net/ see COPYING file
  */
 
 class SimpleXMLExtend extends SimpleXMLElement

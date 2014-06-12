@@ -5,89 +5,22 @@
  * Contient les outils nécessaires à la création des fichiers XML qui seront
  * intégrés à PluXml
  *
- * @todo pour les méthodes cleanXML(), removeNamespaceFromXML(),convertPathMedias(),
- * getXmlWordpressFiles() et displayListXmlWordpressFiles(),
- * voir pour les déplacer dans Wordpress.class.php
- * @todo optimiser le script quand on appelle getRubriqueIdByUrl() : ne plus
- * parser le fichier complet mais parcourir un tableau qui doit être + rapide
- * @todo mettre $config en globale
  * @category   wp2pluxml
  * @author     Nicolas Lœuillet <nicolas.loeuillet@gmail.com>
  * @copyright  2010-2013
- * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @license    http://www.wtfpl.net/ see COPYING file
  */
-
-error_reporting(0);
 
 class Tools
 {
     /**
-     * Nettoie le XML généré par le plugin d'export de Wordpress
-     *
-     * @access public
-     * @param string $source export XML d'un blog Wordpress
-     * @return string document XML nettoyé
-     */
-    private function cleanXML($source)
-    {
-        $namespaces = array (
-            'wp:category'             => 'category',
-            'wp:category_nicename'    => 'category_nicename',
-            'wp:category_description' => 'category_description',
-            'wp:cat_name'             => 'cat_name',
-            'wp:post_name'            => 'post_name',
-            'wp:post_date'            => 'post_date',
-            'wp:status'               => 'status',
-            'wp:post_type'            => 'post_type',
-            'wp:comment_status'       => 'comment_status',
-            'wp:comment'              => 'comment',
-            'excerpt:encoded'         => 'excerpt',
-            'content:encoded'         => 'content',
-            'wp:comment_author'       => 'comment_author',
-            'wp:comment_author_email' => 'comment_author_email',
-            'wp:comment_author_url'   => 'comment_author_url',
-            'wp:comment_author_IP'    => 'comment_author_IP',
-            'wp:comment_date'         => 'comment_date',
-            'wp:comment_content'      => 'comment_content',
-            'wp:comment_approved'     => 'comment_approved',
-        );
-
-        foreach ($namespaces as $namespace => $replace) {
-            $source = str_replace("<" . $namespace . ">",
-                    "<" . $replace . ">", $source);
-            $source = str_replace("</" . $namespace . ">",
-                    "</" . $replace . ">", $source);
-        }
-
-        $source = self::convertPathMedias($source);
-
-        return $source;
-    }
-
-    /**
-     * Permet de changer le chemin des médias du blog Wordpress avec
-     * le bon chemin dans PluXml
-     *
-     * @access private
-     * @todo ne pas laisser les chemins en dur
-     * @param string $source export XML d'un blog Wordpress
-     * @return string document XML avec les chemins des médias modifiés
-     */
-    private function convertPathMedias($source)
-    {
-        $source = str_replace("wp-content/uploads", "data/images", $source);
-
-        return $source;
-    }
-
-    /**
      * Crée un fichier XML PluXml en fonction du billet
      *
      * @access private
-     * @param Wordpress $billet correspond à un billet
+     * @param Billet $billet correspond à un billet
      * @return SimpleXMLExtend fichier xml correspondant au billet
      */
-    private function generateXmlForExport(Wordpress $billet)
+    private function generateXmlForExport(Billet $billet)
     {
         $output = "<?xml version='1.0' encoding='UTF-8'?>" . "\n" .
                     "<document></document>";
@@ -159,11 +92,11 @@ class Tools
      * Écrit dans le fichier XML le contenu du billet
      *
      * @access private
-     * @param Wordpress $billet correspond à un billet
+     * @param Billet $billet correspond à un billet
      * @param array $config configuration de wp2pluxml
      * @return Boolean TRUE si tout se passe bien, FALSE sinon
      */
-    private function generateXmlFile(Wordpress $billet, $config)
+    private function generateXmlFile(Billet $billet, $config)
     {
         $output = $config['racine_articles'] . $billet->getFilename();
         $xml    = self::generateXmlForExport($billet);
@@ -179,11 +112,11 @@ class Tools
      * Écrit dans le fichier XML le contenu du commentaire
      *
      * @access private
-     * @param Wordpress $billet correspond à un billet
+     * @param Billet $billet correspond à un billet
      * @param array $config configuration de wp2pluxml
      * @return Boolean TRUE si tout se passe bien, FALSE sinon
      */
-    private function generateXmlCommentsFile(Wordpress $billet, $config)
+    private function generateXmlCommentsFile(Billet $billet, $config)
     {
         foreach ($billet->getComments() as $comment) {
             $output = $config['racine_commentaires'] .
@@ -238,7 +171,7 @@ class Tools
      * @access private
      * @return Array tableau avec les noms des fichiers XML
      */
-    private function getXmlWordpressFiles()
+    private function getXmlFiles()
     {
         $files = array();
 
@@ -264,10 +197,10 @@ class Tools
      * @access public
      * @return array
      */
-    public function displayListXmlWordpressFiles()
+    public function displayListXmlFiles()
     {
         $liste = array();
-        $files = Tools::getXmlWordpressFiles();
+        $files = Tools::getXmlFiles();
         foreach ($files as $file) {
             $liste[$file] = $file;
         }
@@ -393,15 +326,15 @@ class Tools
     }
 
     /**
-     * Vérifie si le fichier XML de l'export Wordpress est correct
+     * Vérifie si le fichier XML de l'export est correct
      *
      * @param string $file URL du fichier XML à parser
      * @return boolean
      */
-    private function checkWordpressExport($file)
+    private function checkExport($file)
     {
         if ('' == $file) {
-            Tools::log('Le fichier XML de l\'export Wordpress n\'est pas correct', __LINE__);
+            Tools::log('Le fichier XML de l\'export n\'est pas correct', __LINE__);
             return FALSE;
         }
 
@@ -413,12 +346,12 @@ class Tools
     }
 
     /**
-     * Convertit le fichier XML de Wordpress en un objet XML
+     * Convertit le fichier XML en un objet XML
      *
      * @param string $file URL du fichier XML à parser
      * @return SimpleXMLElement
      */
-    private function getXmlFromWordpressExport($file)
+    private function getXmlFromExport($file, $type_site)
     {
         $data = file_get_contents($file);
 
@@ -427,14 +360,14 @@ class Tools
             return NULL;
         }
 
-        $data = self::cleanXML($data);
+        $data = $type_site::cleanXML($data);
 
         if (!$data) {
             Tools::log('Erreur lors du nettoyage du fichier XML', __LINE__);
             return NULL;
         }
 
-        return @simplexml_load_string($data);
+        return $data;
     }
 
     /**
@@ -483,11 +416,11 @@ class Tools
     /**
      * Génère la ligne à ajouter dans le .htaccess pour les billets
      *
-     * @param Wordpress $billet correspond à un billet
+     * @param Billet $billet correspond à un billet
      * @param array $config configuration de wp2pluxml
      * @return boolean
      */
-    private function addBilletToHtaccess(Wordpress $billet, $config)
+    private function addBilletToHtaccess(Billet $billet, $config)
     {
         // $url_originale = str_replace($config['url_blog'], '', $billet->getUrl());
         $url_originale = $billet->getUrl();
@@ -504,12 +437,14 @@ class Tools
     /**
      * Lance la conversion des billets et des commentaires
      *
-     * @param SimpleXMLElement $items noeud XML correspondant aux billets
+     * @param array $data tableau comprenant les billets, les catégories et tout le xml
      * @return boolean
      */
-    public function convertPostsAndComments($items, $categories, $config)
+    public function convertPostsAndComments($data, $categories, $config, $type_site)
     {
         $id = 1;
+
+        $items = $data['items'];
 
         if (count($items) == 0) {
             Tools::log('Le tableau $items pour les billets est vide', __LINE__);
@@ -517,14 +452,10 @@ class Tools
         }
 
         foreach ($items as $item) {
-            $billet = new Wordpress($item);
+            $billet = new $type_site($item, $data);
             $billet->setId($id);
             // FIXME remplacer ici par l'identifiant de l'auteur du billet
             // $billet->setAuthor($config['author']);
-
-            if ($billet->getType() != 'post') {
-                continue;
-            }
 
             $rubrique_id = self::getRubriqueIdByUrl($categories, $billet->getRubriqueUrl());
             $billet->setRubriqueId($rubrique_id);
@@ -576,7 +507,7 @@ class Tools
         }
 
         # On vérifie qu'il y a bien un ou plusieurs fichiers d'export dans le répertoire de wp2pluxml
-        if (self::displayListXmlWordpressFiles() == array()) {
+        if (self::displayListXmlFiles() == array()) {
             $verifications['xml_presents'] = FALSE;
             $verifications['demarrer_installation'] = FALSE;
         }
@@ -592,21 +523,22 @@ class Tools
      */
     public function convert2pluxml($post, $config)
     {
-        $filename_wp = (isset($post['file']) ? $post['file'] : '');
+        $filename  = (isset($post['file']) ? $post['file'] : '');
+        $type_site = (isset($post['type_site']) ? $post['type_site'] : 'Wordpress');
 
-        if (!self::checkWordpressExport($filename_wp)) {
+        if (!self::checkExport($filename)) {
             return FALSE;
         }
 
-        if (!($xml = Tools::getXmlFromWordpressExport($filename_wp))) {
+        if (!($xml = Tools::getXmlFromExport($filename, $type_site))) {
             return FALSE;
         }
 
-        if (!($categories = self::convertCategories($xml->channel->category, $config))) {
+        if (!($categories = self::convertCategories($xml['categories'], $config))) {
             return FALSE;
         }
 
-        if (!self::convertPostsAndComments($xml->channel->item, $categories, $config)) {
+        if (!self::convertPostsAndComments($xml, $categories, $config, $type_site)) {
             return FALSE;
         }
 

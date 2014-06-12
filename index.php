@@ -5,10 +5,10 @@
  * @category   wp2pluxml
  * @author     Nicolas Lœuillet <nicolas.loeuillet@gmail.com>
  * @copyright  2010-2013
- * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @license    http://www.wtfpl.net/ see COPYING file
  */
 
-error_reporting(0);
+error_reporting(E_ALL);
 # Configuration avancée #
 define('PLX_ROOT', '../');
 define('PLX_CORE', PLX_ROOT.'core/');
@@ -41,7 +41,9 @@ include(PLX_CORE.'lib/class.plx.encrypt.php');
 include(PLX_CORE.'lib/class.plx.plugins.php');
 
 include_once 'lib/SimpleXMLExtend.class.php';
+include_once 'lib/Billet.class.php';
 include_once 'lib/Wordpress.class.php';
+include_once 'lib/Spip.class.php';
 include_once 'lib/Tools.class.php';
 include_once 'lib/oolog.class.php';
 
@@ -76,7 +78,7 @@ if(!empty($_POST['file'])) {
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>wp2pluxml - quittez WordPress pour PluXml</title>
+<title>wp2pluxml - Passez à PluXml en toute simplicité</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="assets/knacss.css" media="all">
 <link rel="stylesheet" href="assets/style.css" media="all">
@@ -92,7 +94,7 @@ if(!empty($_POST['file'])) {
         <h2>wp2pluxml</h2>
 
         <div>
-            <b>wp2pluxml</b> vous permet de convertir le contenu de votre blog Wordpress en un blog PluXml. Très simplement, les billets, les pages, les commentaires et les auteurs pourront être récupérés sur votre tout nouveau PluXml fraichement installé.
+            <b>wp2pluxml</b> vous permet de convertir le contenu de votre site (WordPress, SPIP, etc.) en un blog PluXml.
         </div>
 
         <h2>Pré-requis</h2>
@@ -120,7 +122,14 @@ if(!empty($_POST['file'])) {
         <div>
             <form action="index.php" method="post">
                 <ul id="liste_formulaire">
-                    <li><?php plxUtils::printSelect('file', Tools::displayListXmlWordpressFiles()) ?></li>
+                    <li>Type de site à convertir :
+                        <ul>
+                            <li><label for="type_wp">WordPress</label> <input type="radio" id="type_wp" name="type_site" value="Wordpress" checked="checked" /></li>
+                            <li><label for="type_spip">SPIP</label> <input type="radio" id="type_spip" name="type_site" disabled="true" value="Spip" /></li>
+                            <li><label for="type_dc">Dotclear</label> <input type="radio" id="type_dc" name="type_site" value="Dotclear" /></li>
+                        </ul>
+                    </li>
+                    <li><?php plxUtils::printSelect('file', Tools::displayListXmlFiles()) ?></li>
                     <li><input type="submit" value="Lancer la conversion" /></li>
                 </ul>
             </form>
@@ -136,13 +145,12 @@ if(!empty($_POST['file'])) {
         <ul>
             <li><a href="https://github.com/nicosomb/wp2pluxml/issues/new">Rapporter un bug</a></li>
             <li><a href="https://github.com/nicosomb/wp2pluxml/wiki">Documentation</a></li>
-            <li><a href="http://www.cdetc.fr/wp2pluxml/">Le blog du projet</a></li>
         </ul>
 
     </div>
 
     <footer class="right small">
-        <a href="https://github.com/nicosomb/wp2pluxml/">wp2pluxml</a>, par <a href="http://www.cdetc.fr">Nicolas Lœuillet</a>
+        <a href="https://github.com/nicosomb/wp2pluxml/">wp2pluxml</a>, par <a href="http://www.cdetc.fr">Nicolas Lœuillet</a> - Do What the Fuck You Want to Public License <a href="http://www.wtfpl.net/"><img src="assets/wtfpl.png" width="80" height="15" alt="WTFPL" /></a>
     </footer>
 
 </body>
