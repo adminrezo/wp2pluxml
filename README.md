@@ -12,6 +12,7 @@ J'ai fait une image Docker pour avoir un wp2pluxml qui marche, basé sur Debian 
 ```
 docker run -it adminrezo/wp2pluxml /start.sh
 ```
+
  - Aller sur http://172.17.0.X/pluxml/
  - Installer pluxml
  - Dans le container :
@@ -22,4 +23,4 @@ xxxxx# wget http://monserveur/monexport-wp.xml
 ```
 
  - Aller sur http://172.17.0.X/pluxml/wp2pluxml
- - It works
+ - It works!
