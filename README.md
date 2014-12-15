@@ -15,17 +15,11 @@ J'ai fait une image Docker pour avoir un wp2pluxml qui marche, basé sur Debian 
 ```
 docker run -v /tmp/wp2pluxml:/tmp -it adminrezo/wp2pluxml
 xxxxx# service apache2 start
+xxxxx# cp /tmp/wp2pluxml/monexport-wp.xml .
 ```
 
  - Au lancement d'Apache, vous voyez l'adresse IP du container (quelque chose comme 172.17.0.X)
  - Allez sur http://172.17.0.X/pluxml/ pour installer pluxml
- - Dans le container :
-
-```
-xxxxx# cd /var/www/pluxml/wp2pluxml
-xxxxx# cp /tmp/wp2pluxml/monexport-wp.xml .
-```
-
- - Aller sur http://172.17.0.X/pluxml/wp2pluxml
- - Tout s'exporte dans /var/www/pluxml/content
-
+ - Allez sur http://172.17.0.X/pluxml/wp2pluxml
+ - Vérifiez sur http://172.17.0.X/pluxml/
+ - That's all folks !
