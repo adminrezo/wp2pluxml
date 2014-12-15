@@ -1,6 +1,6 @@
 # wp2pluxml
 
-WP2Pluxml est un script de conversion de Wordpress vers Pluxml (parce que c'est mieux ;-) ).
+[WP2Pluxml](https://github.com/nicosomb/wp2pluxml "WP2Pluxml") est un script de conversion de Wordpress vers pluxml (merci @nicosomb).
 Ce script ne fonctionne plus avec les versions récentes de Apache, Php, Mysql.
 J'ai fait une image Docker pour avoir un wp2pluxml qui marche, basé sur Debian Squeeze.
 
