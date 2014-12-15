@@ -6,20 +6,23 @@ J'ai fait une image Docker pour avoir un wp2pluxml qui marche, basé sur Debian 
 
 ## Usage
 
+ - Exportez votre Wordpress avec la fonction export incluse dans WP.
+ - Créez un répertoire /tmp/wp2pluxml
+ - Placez votre fichier XML d'export dans /tmp/wp2pluxml
  - Installer Docker
  - Lancer mon container :
 
 ```
-docker run -it adminrezo/wp2pluxml /start.sh
+docker run -v /tmp/wp2pluxml:/tmp -it adminrezo/wp2pluxml /start.sh
 ```
 
- - Aller sur http://172.17.0.X/pluxml/
- - Installer pluxml
+ - Au lancement, vous voyez l'adresse IP du container (quelque chose comme 172.17.0.X)
+ - Aller sur http://172.17.0.X/pluxml/ pour installer pluxml
  - Dans le container :
 
 ```
 xxxxx# cd /var/www/pluxml/wp2pluxml
-xxxxx# wget http://monserveur/monexport-wp.xml
+xxxxx# cp /tmp/wp2pluxml/monexport-wp.xml .
 ```
 
  - Aller sur http://172.17.0.X/pluxml/wp2pluxml
