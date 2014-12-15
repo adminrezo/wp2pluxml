@@ -1,7 +1,7 @@
 # WP2Pluxml
 # Pour Debian Squeeze
 #
-# VERSION               0.0.1
+# VERSION               0.2
 #
 
 
@@ -17,14 +17,13 @@ RUN apt-get update && apt-get install -y -q apache2 libapache2-mod-php5 php5-cli
 
 # Installation de pluxml
 
-WORKDIR /var/www
 RUN wget http://telechargements.pluxml.org/download.php -O pluxml.zip
 RUN unzip *.zip
+RUN mv pluxml /var/www/
 RUN rm *.zip
-WORKDIR /var/www/pluxml
-RUN wget https://github.com/pluxml/PluXml/archive/master.zip --no-check-certificate
-RUN unzip *.zip
-#RUN mv /var/www/wp2* /var/www/pluxml/wp2pluxml
+RUN wget https://github.com/nicosomb/wp2pluxml/archive/master.zip --no-check-certificate
+RUN unzip master.zip
+RUN mv wp2pluxml-master /var/www/pluxml/
 RUN chown www-data.www-data -R /var/www
 
 # Demarrage des services
