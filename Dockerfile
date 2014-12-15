@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # Depots, mises a jour et installs de Apache/PHP5
 
 RUN (apt-get update && apt-get upgrade -y -q && apt-get dist-upgrade -y -q && apt-get -y -q autoclean && apt-get -y -q autoremove)
-RUN apt-get update && apt-get install -y -q apache2 libapache2-mod-php5 php5-cli wget nano unzip
+RUN apt-get update && apt-get install -y -q apache2 libapache2-mod-php5 php5-gd wget nano unzip
 
 # Installation de pluxml
 
@@ -28,5 +28,7 @@ RUN chown www-data.www-data -R /var/www
 
 # Demarrage des services
 
-EXPOSE 443 80
+WORKDIR /var/www/pluxml/wp2pluxml
+RUN a2enmod rewrite
+EXPOSE 80
 CMD ["/bin/bash"]
