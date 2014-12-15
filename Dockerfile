@@ -23,7 +23,7 @@ RUN mv pluxml /var/www/
 RUN rm *.zip
 RUN wget https://github.com/nicosomb/wp2pluxml/archive/master.zip --no-check-certificate
 RUN unzip master.zip
-RUN mv wp2pluxml-master /var/www/pluxml/
+RUN mv wp2pluxml-master /var/www/pluxml/wp2pluxml
 RUN chown www-data.www-data -R /var/www
 
 # Demarrage des services
